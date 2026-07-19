@@ -84,10 +84,10 @@ export const authApi = {
       body: JSON.stringify({ mobile, otp, ...(name ? { name } : {}) }),
     }),
 
-  googleCallback: (sessionId) =>
-    request('/api/auth/google/callback', {
+  googleSignIn: (idToken) =>
+    request('/api/auth/google', {
       method: 'POST',
-      body: JSON.stringify({ sessionId }),
+      body: JSON.stringify({ idToken }),
     }),
 
   me: () => request('/api/auth/me'),
