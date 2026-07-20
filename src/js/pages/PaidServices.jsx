@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialogue';
@@ -17,12 +18,20 @@ const timeSlots = ['09:00 AM','10:00 AM','11:00 AM','12:00 PM','02:00 PM','03:00
 const PaidServices = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('');
   const [bookingService, setBookingService] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const confirmBooking = async () => {
+    if (!user) {
+      // Not logged in – send them to login instead of faking a booking
+      toast({ title: 'Please sign in', description: 'You need an account to book this service.' });
+      navigate('/login', { state: { redirectTo: '/paid-services' } });
+      return;
+    }
+
     if (!selectedTime) {
       toast({ title: 'Error', description: 'Please select a time slot', variant: 'destructive' });
       return;
@@ -33,20 +42,14 @@ const PaidServices = () => {
       // Format date as YYYY-MM-DD for the backend
       const dateStr = selectedDate.toISOString().split('T')[0];
 
-      if (user) {
-        // Authenticated – save to backend
-        await bookingsApi.create(
-          bookingService.id,
-          bookingService.name,
-          bookingService.price,
-          dateStr,
-          selectedTime
-        );
-        toast({ title: '🎉 Booking Confirmed!', description: `${bookingService.name} scheduled for ${selectedDate.toDateString()} at ${selectedTime}` });
-      } else {
-        // Not logged in – show demo confirmation
-        toast({ title: 'Booking Confirmed! (Preview)', description: `Sign in to save bookings. ${bookingService.name} on ${selectedDate.toDateString()} at ${selectedTime}` });
-      }
+      await bookingsApi.create(
+        bookingService.id,
+        bookingService.name,
+        bookingService.price,
+        dateStr,
+        selectedTime
+      );
+      toast({ title: '🎉 Booking Confirmed!', description: `${bookingService.name} scheduled for ${selectedDate.toDateString()} at ${selectedTime}` });
       setBookingService(null);
       setSelectedTime('');
     } catch (err) {
@@ -126,9 +129,9 @@ const PaidServices = () => {
                             </div>
 
                             <Button className="w-full mt-4 bg-black hover:bg-gray-800" onClick={confirmBooking} disabled={submitting}>
-                              {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Booking...</> : user ? 'Confirm Booking' : 'Confirm Booking (Preview)'}
+                              {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Booking...</> : user ? 'Confirm Booking' : 'Sign in to Book'}
                             </Button>
-                            {!user && <p className="text-xs text-center text-gray-500 mt-2">Sign in to save your booking</p>}
+                            {!user && <p className="text-xs text-center text-gray-500 mt-2">You'll be asked to sign in first</p>}
                           </div>
                         </div>
                       </DialogContent>
