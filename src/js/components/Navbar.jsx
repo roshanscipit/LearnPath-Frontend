@@ -23,6 +23,7 @@ const Navbar = () => {
     { to: '/roles', label: 'Learning Paths' },
     { to: '/companies', label: 'Companies' },
     { to: '/mock-tests', label: 'Mock Tests' },
+    { to: '/career-agent', label: 'AI Career Agent' },
     { to: '/paid-services', label: 'Premium' },
   ];
 
