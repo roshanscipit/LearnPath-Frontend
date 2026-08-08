@@ -12,6 +12,7 @@ import Signup from "./js/pages/Signup";
 import Dashboard from "./js/pages/Dashboard";
 import Roles from "./js/pages/Roles";
 import LearningPath from "./js/pages/LearningPath";
+import CareerAgent from "./js/pages/CareerAgent";
 import Companies from "./js/pages/Companies";
 import CompanyDetail from "./js/pages/ComapanyDetails";
 import MockTests from "./js/pages/MockTests";
@@ -56,6 +57,7 @@ function AppRouter() {
         <Route path="/learning-path" element={<ProtectedRoute><LearningPath /></ProtectedRoute>} />
         <Route path="/role/:roleId"  element={<ProtectedRoute><LearningPath /></ProtectedRoute>} />
         <Route path="/profile"       element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/career-agent"  element={<ProtectedRoute><CareerAgent /></ProtectedRoute>} />
         <Route path="/help"          element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
       </Routes>
       {showLayout && <Footer />}
