@@ -8,6 +8,7 @@ import { Lock, CheckCircle, Play, Calculator, Code, BookOpen, Network, Users, Ar
 import { roles as fallbackRoles, learningModules, userProgress as fallbackProgress } from '../mock/mockData';
 import { progressApi, rolesApi } from '../services/api';
 import { useToast } from '../hooks/use-toast';
+import RoleRoadmap from '../components/RoleRoadmap';
 
 const iconMap = { Calculator, Code, BookOpen, Network, Users };
 
@@ -222,6 +223,13 @@ const LearningPath = () => {
             );
           })}
         </div>
+
+        {/* Role-specific curriculum: topics, key points, interview Q&A */}
+        {selectedRole?.id && (
+          <div className="mt-10">
+            <RoleRoadmap roleId={selectedRole.id} />
+          </div>
+        )}
       </div>
     </div>
   );

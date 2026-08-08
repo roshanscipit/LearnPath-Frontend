@@ -4,7 +4,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import { Badge } from '../components/ui/badge';
-import { Target, TrendingUp, Award, Lock, CheckCircle, Clock, BookOpen, Loader2 } from 'lucide-react';
+import { Target, TrendingUp, Award, Lock, CheckCircle, Clock, BookOpen, Loader2, Sparkles } from 'lucide-react';
 import { learningModules, userProgress as fallbackProgress } from '../mock/mockData';
 import { progressApi } from '../services/api';
 
@@ -92,6 +92,24 @@ const Dashboard = ({ user }) => {
                 <span className="text-3xl font-bold">{progress.averageScore}%</span>
                 <TrendingUp className="w-8 h-8 text-green-600" />
               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* AI Career Agent callout */}
+        <div className="mb-8">
+          <Card className="border-2 border-black">
+            <CardContent className="py-6 flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="font-semibold text-black">New: AI Career Agent</p>
+                  <p className="text-sm text-gray-600">Get a personalized plan based on your role, experience, and resume.</p>
+                </div>
+              </div>
+              <Link to="/career-agent"><Button className="bg-black hover:bg-gray-800">Try it</Button></Link>
             </CardContent>
           </Card>
         </div>
