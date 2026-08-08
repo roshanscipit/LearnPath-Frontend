@@ -113,6 +113,53 @@ export const rolesApi = {
   getById: (id) => request(`/api/roles/${id}`),
 };
 
+// ─── Roadmap API (curriculum, key points, interview Q&A) ──────
+
+export const roadmapApi = {
+  getIndex: () => request('/api/roadmap'),
+  getByRole: (moduleId) => request(`/api/roadmap/${moduleId}`),
+  getByRoleAndLevel: (moduleId, level) => request(`/api/roadmap/${moduleId}/level/${level}`),
+};
+
+// ─── Career Agent API (AI-powered, multipart for resume upload) ──
+
+async function careerAgentRequest(path, options = {}) {
+  const token = tokenStorage.get();
+  const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+
+  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+
+  if (res.status === 401) {
+    tokenStorage.clear();
+    userStorage.clear();
+    window.location.href = '/login';
+    return;
+  }
+
+  if (res.status === 404) return null;
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = data?.detail || data?.message || `Request failed (${res.status})`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+export const careerAgentApi = {
+  analyze: ({ targetRole, yearsOfExperience, additionalContext, resumeFile }) => {
+    const form = new FormData();
+    form.append('targetRole', targetRole);
+    form.append('yearsOfExperience', yearsOfExperience);
+    if (additionalContext) form.append('additionalContext', additionalContext);
+    if (resumeFile) form.append('resume', resumeFile);
+
+    return careerAgentRequest('/api/career-agent/analyze', { method: 'POST', body: form });
+  },
+
+  getSavedProfile: () => careerAgentRequest('/api/career-agent/profile'),
+};
+
 // ─── Mock Tests API ───────────────────────────────────────────
 
 export const mockTestsApi = {
