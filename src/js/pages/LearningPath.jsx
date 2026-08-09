@@ -6,17 +6,56 @@ import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { Lock, CheckCircle, Play, Calculator, Code, BookOpen, Network, Users, ArrowLeft, Loader2, Save } from 'lucide-react';
 import { roles as fallbackRoles, learningModules, userProgress as fallbackProgress } from '../mock/mockData';
-import { progressApi, rolesApi } from '../services/api';
+import { progressApi, rolesApi, roadmapApi } from '../services/api';
 import { useToast } from '../hooks/use-toast';
 import RoleRoadmap from '../components/RoleRoadmap';
 
 const iconMap = { Calculator, Code, BookOpen, Network, Users };
+
+// Aptitude & Behavioral are genuinely role-agnostic (same quant/verbal/STAR prep
+// for everyone), so they always come from the shared generic list.
+const COMMON_MODULE_IDS = ['aptitude', 'behavioral'];
+
+// Flatten a role's curriculum levels into a compact topic list for the
+// "Technical" module card (the full depth is still shown in RoleRoadmap below).
+function technicalTopicsFromLevels(levels) {
+  if (!Array.isArray(levels)) return null;
+  const titles = levels.flatMap(l => (l.topics || []).map(t => t.title));
+  return titles.length ? titles : null;
+}
+
+// Build the 5-module list for the currently selected role: common modules
+// (Aptitude, Behavioral) come from shared mock data; Coding/Technical/System
+// Design use the role's own roadmap JSON when available, and fall back to
+// the old generic content for roles that don't have role-specific data yet.
+function buildModules(roadmapDetail) {
+  return learningModules.map((generic) => {
+    if (COMMON_MODULE_IDS.includes(generic.id)) return generic;
+
+    if (generic.id === 'coding' && roadmapDetail?.codingModule) {
+      const m = roadmapDetail.codingModule;
+      return { ...generic, duration: m.duration, questionsCount: m.questionsCount, topics: m.topics, focus: m.focus };
+    }
+    if (generic.id === 'system-design' && roadmapDetail?.systemDesignModule) {
+      const m = roadmapDetail.systemDesignModule;
+      return { ...generic, duration: m.duration, questionsCount: m.questionsCount, topics: m.topics, focus: m.focus };
+    }
+    if (generic.id === 'technical') {
+      const topics = technicalTopicsFromLevels(roadmapDetail?.levels);
+      if (topics) {
+        return { ...generic, questionsCount: topics.length * 25, topics, focus: 'Full role-specific curriculum with key points and interview Q&A is below.' };
+      }
+    }
+    return generic; // fallback: role has no specific content yet
+  });
+}
 
 const LearningPath = () => {
   const { roleId } = useParams();
   const { toast } = useToast();
   const [progress, setProgress] = useState(fallbackProgress);
   const [roles, setRoles] = useState(fallbackRoles);
+  const [roadmapDetail, setRoadmapDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -43,12 +82,25 @@ const LearningPath = () => {
     || roles.find(r => r.id === progress.selectedRole)
     || roles[0];
 
+  // Once we know which role is selected, fetch its roadmap JSON so the
+  // Coding/Technical/System Design cards can show role-specific content.
+  useEffect(() => {
+    if (!selectedRole?.id) return;
+    let cancelled = false;
+    roadmapApi.getByRole(selectedRole.id)
+      .then((data) => { if (!cancelled) setRoadmapDetail(data); })
+      .catch(() => { if (!cancelled) setRoadmapDetail(null); });
+    return () => { cancelled = true; };
+  }, [selectedRole?.id]);
+
+  const modules = buildModules(roadmapDetail);
+
   const getModuleStatus = (moduleId) => {
     const completed = progress.completedModules || [];
     if (completed.includes(moduleId)) return 'completed';
     if (moduleId === progress.currentModule) return 'current';
-    const moduleOrder = learningModules.find(m => m.id === moduleId)?.order || 0;
-    const currentOrder = learningModules.find(m => m.id === progress.currentModule)?.order || 0;
+    const moduleOrder = modules.find(m => m.id === moduleId)?.order || 0;
+    const currentOrder = modules.find(m => m.id === progress.currentModule)?.order || 0;
     return moduleOrder <= currentOrder ? 'unlocked' : 'locked';
   };
 
@@ -61,11 +113,11 @@ const LearningPath = () => {
     if (status === 'current' || status === 'unlocked') {
       // Mark current module as completed, move to next
       if (!newCompleted.includes(module.id)) newCompleted.push(module.id);
-      const nextModule = learningModules.find(m => m.order === module.order + 1);
+      const nextModule = modules.find(m => m.order === module.order + 1);
       if (nextModule) newCurrent = nextModule.id;
     }
 
-    const totalModules = learningModules.length;
+    const totalModules = modules.length;
     const newProgress = Math.round((newCompleted.length / totalModules) * 100);
 
     const updated = {
@@ -141,7 +193,7 @@ const LearningPath = () => {
 
         {/* Modules */}
         <div className="space-y-6">
-          {learningModules.map((module, index) => {
+          {modules.map((module, index) => {
             const Icon = iconMap[module.icon] || BookOpen;
             const status = getModuleStatus(module.id);
             const isLocked = status === 'locked';
@@ -150,7 +202,7 @@ const LearningPath = () => {
 
             return (
               <div key={module.id} className="relative">
-                {index < learningModules.length - 1 && (
+                {index < modules.length - 1 && (
                   <div className="absolute left-8 top-24 w-0.5 h-12 bg-gray-300 z-0"></div>
                 )}
 
@@ -203,8 +255,7 @@ const LearningPath = () => {
                       <div>
                         <h4 className="font-semibold text-sm text-gray-700 mb-2">What you'll learn:</h4>
                         <p className="text-sm text-gray-600">
-                          Master {module.name.toLowerCase()} concepts through structured learning and practice.
-                          Complete {module.questionsCount}+ questions to build strong foundations.
+                          {module.focus || `Master ${module.name.toLowerCase()} concepts through structured learning and practice. Complete ${module.questionsCount}+ questions to build strong foundations.`}
                         </p>
                       </div>
                     </div>
@@ -213,7 +264,7 @@ const LearningPath = () => {
                       <div className="mt-4 p-4 bg-gray-100 rounded-lg flex items-center">
                         <Lock className="w-5 h-5 text-gray-500 mr-3" />
                         <p className="text-sm font-semibold text-gray-600">
-                          Complete "{learningModules[index - 1]?.name}" to unlock this module
+                          Complete "{modules[index - 1]?.name}" to unlock this module
                         </p>
                       </div>
                     )}
