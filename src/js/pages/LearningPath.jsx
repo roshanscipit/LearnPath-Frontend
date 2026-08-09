@@ -12,9 +12,9 @@ import RoleRoadmap from '../components/RoleRoadmap';
 
 const iconMap = { Calculator, Code, BookOpen, Network, Users };
 
-// Aptitude & Behavioral are genuinely role-agnostic (same quant/verbal/STAR prep
-// for everyone), so they always come from the shared generic list.
-const COMMON_MODULE_IDS = ['aptitude', 'behavioral'];
+// Aptitude is the only genuinely role-agnostic module (same quant/verbal prep
+// for everyone), so it always comes from the shared generic list.
+const COMMON_MODULE_IDS = ['aptitude'];
 
 // Flatten a role's curriculum levels into a compact topic list for the
 // "Technical" module card (the full depth is still shown in RoleRoadmap below).
@@ -24,10 +24,10 @@ function technicalTopicsFromLevels(levels) {
   return titles.length ? titles : null;
 }
 
-// Build the 5-module list for the currently selected role: common modules
-// (Aptitude, Behavioral) come from shared mock data; Coding/Technical/System
-// Design use the role's own roadmap JSON when available, and fall back to
-// the old generic content for roles that don't have role-specific data yet.
+// Build the 5-module list for the currently selected role: Aptitude comes from
+// shared mock data; Coding/Technical/System Design/Behavioral use the role's own
+// roadmap JSON when available, and fall back to the old generic content for
+// roles that don't have role-specific data yet.
 function buildModules(roadmapDetail) {
   return learningModules.map((generic) => {
     if (COMMON_MODULE_IDS.includes(generic.id)) return generic;
@@ -38,6 +38,10 @@ function buildModules(roadmapDetail) {
     }
     if (generic.id === 'system-design' && roadmapDetail?.systemDesignModule) {
       const m = roadmapDetail.systemDesignModule;
+      return { ...generic, duration: m.duration, questionsCount: m.questionsCount, topics: m.topics, focus: m.focus };
+    }
+    if (generic.id === 'behavioral' && roadmapDetail?.behavioralModule) {
+      const m = roadmapDetail.behavioralModule;
       return { ...generic, duration: m.duration, questionsCount: m.questionsCount, topics: m.topics, focus: m.focus };
     }
     if (generic.id === 'technical') {
