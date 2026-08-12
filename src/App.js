@@ -13,6 +13,7 @@ import Dashboard from "./js/pages/Dashboard";
 import Roles from "./js/pages/Roles";
 import LearningPath from "./js/pages/LearningPath";
 import ModuleContent from "./js/pages/ModuleContent";
+import MockTestRunner from "./js/pages/MockTestRunner";
 import CareerAgent from "./js/pages/CareerAgent";
 import Companies from "./js/pages/Companies";
 import CompanyDetail from "./js/pages/ComapanyDetails";
@@ -47,6 +48,7 @@ function AppRouter() {
         <Route path="/companies" element={<Companies />} />
         <Route path="/company/:companyId" element={<CompanyDetail />} />
         <Route path="/mock-tests" element={<MockTests />} />
+        <Route path="/mock-tests/:testId" element={<ProtectedRoute><MockTestRunner /></ProtectedRoute>} />
         <Route path="/paid-services" element={<PaidServices />} />
 
         {/* Admin */}
