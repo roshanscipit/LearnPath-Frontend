@@ -27,7 +27,7 @@ const MockTests = () => {
   const freeTests = tests.filter(t => t.type === 'free');
 
   const handleStartTest = (test) => {
-    toast({ title: `Starting: ${test.title}`, description: `${test.questions} questions · ${test.duration} mins · ${test.difficulty}` });
+    navigate(`/mock-tests/${test.id}`);
   };
 
   return (
