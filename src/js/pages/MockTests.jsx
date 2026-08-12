@@ -10,6 +10,13 @@ import { useToast } from '../hooks/use-toast';
 
 const getDifficultyColor = (d) => ({ Easy: 'bg-green-100 text-green-800', Medium: 'bg-yellow-100 text-yellow-800', Hard: 'bg-red-100 text-red-800' }[d] || 'bg-gray-100 text-gray-800');
 
+const ROLE_LABELS = {
+  java: 'Java Developer', python: 'Python Developer', devops: 'DevOps Engineer',
+  'data-engineer': 'Data Engineer', testing: 'QA/Testing', dotnet: '.NET Developer',
+  mobile: 'Mobile Developer', salesforce: 'Salesforce Developer', sap: 'SAP Consultant',
+  cybersecurity: 'Cybersecurity Analyst',
+};
+
 const MockTests = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -57,6 +64,9 @@ const MockTests = () => {
                       <Badge className={getDifficultyColor(test.difficulty)}>{test.difficulty}</Badge>
                     </div>
                     <CardTitle className="text-xl">{test.title}</CardTitle>
+                    {test.role && ROLE_LABELS[test.role] && (
+                      <Badge variant="outline" className="w-fit mb-1">{ROLE_LABELS[test.role]}</Badge>
+                    )}
                     <CardDescription>{test.sections.join(' • ')}</CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -88,11 +98,11 @@ const MockTests = () => {
               <CardHeader className="text-center">
                 <Award className="w-16 h-16 mx-auto mb-4 text-yellow-500" />
                 <CardTitle className="text-3xl">Premium Mock Tests</CardTitle>
-                <CardDescription className="text-lg">Company-specific mocks and detailed analytics</CardDescription>
+                <CardDescription className="text-lg">Deeper role-specific mocks and detailed analytics</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 mb-6">
-                  {['100+ company-specific mock tests', 'Detailed performance analytics and insights', 'Unlimited test attempts', 'Video solutions for all questions'].map((feat, i) => (
+                  {['Focused coding rounds for every role', 'Detailed performance analytics and insights', 'Unlimited test attempts', 'Video solutions for all questions'].map((feat, i) => (
                     <div key={i} className="flex items-center p-4 bg-gray-50 rounded-lg">
                       <div className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-4">✓</div>
                       <span>{feat}</span>

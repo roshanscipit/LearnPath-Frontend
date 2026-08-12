@@ -65,7 +65,10 @@ const MockTestRunner = () => {
         if (cancelled) return;
         setTest(found);
 
-        const roleTag = progress.status === 'fulfilled' ? progress.value?.selectedRole : null;
+        // Prefer the role baked into the test itself (role-wise mock tests) and fall
+        // back to the user's saved profile role for role-agnostic tests (Aptitude, etc.)
+        const profileRole = progress.status === 'fulfilled' ? progress.value?.selectedRole : null;
+        const roleTag = found.role || profileRole || null;
         setRole(roleTag || null);
 
         const sections = (found.sections || []).length ? found.sections : ['Aptitude'];
