@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -56,6 +56,7 @@ function buildModules(roadmapDetail) {
 
 const LearningPath = () => {
   const { roleId } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [progress, setProgress] = useState(fallbackProgress);
   const [roles, setRoles] = useState(fallbackRoles);
@@ -231,15 +232,30 @@ const LearningPath = () => {
                       </div>
 
                       {!isLocked && (
-                        <Button
-                          className={isCompleted ? 'bg-green-600 hover:bg-green-700' : 'bg-black hover:bg-gray-800'}
-                          size="lg"
-                          disabled={saving}
-                          onClick={() => !isCompleted && handleModuleAction(module, status)}
-                        >
-                          {isCompleted ? 'Review' : isCurrent ? 'Mark Complete' : 'Start'}
-                          {isCompleted ? <CheckCircle className="w-4 h-4 ml-2" /> : <Play className="w-4 h-4 ml-2" />}
-                        </Button>
+                        <div className="flex flex-col items-end gap-2">
+                          <Button
+                            className={isCompleted ? 'bg-green-600 hover:bg-green-700' : 'bg-black hover:bg-gray-800'}
+                            size="lg"
+                            disabled={saving}
+                            onClick={() => !isCompleted && handleModuleAction(module, status)}
+                          >
+                            {isCompleted ? 'Review' : isCurrent ? 'Mark Complete' : 'Start'}
+                            {isCompleted ? <CheckCircle className="w-4 h-4 ml-2" /> : <Play className="w-4 h-4 ml-2" />}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (module.id === 'technical') {
+                                document.getElementById('role-roadmap-section')?.scrollIntoView({ behavior: 'smooth' });
+                              } else {
+                                navigate(`/role/${selectedRole.id}/${module.id}`);
+                              }
+                            }}
+                          >
+                            Practice Questions
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </CardHeader>
@@ -281,7 +297,7 @@ const LearningPath = () => {
 
         {/* Role-specific curriculum: topics, key points, interview Q&A */}
         {selectedRole?.id && (
-          <div className="mt-10">
+          <div className="mt-10" id="role-roadmap-section">
             <RoleRoadmap roleId={selectedRole.id} />
           </div>
         )}
