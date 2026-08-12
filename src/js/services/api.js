@@ -121,6 +121,23 @@ export const roadmapApi = {
   getByRoleAndLevel: (moduleId, level) => request(`/api/roadmap/${moduleId}/level/${level}`),
 };
 
+// ─── Questions API (practice content per module) ───────────────
+
+export const questionsApi = {
+  // questionType: CODING | APTITUDE | SYSTEM_DESIGN | BEHAVIORAL | MIXED
+  // roleTag: 'java' | 'python' | 'devops' | ... (omit for common/shared content like Aptitude)
+  getSession: ({ questionType, roleTag, difficulty, count = 10 }) =>
+    request('/api/questions/session', {
+      method: 'POST',
+      body: JSON.stringify({ questionType, roleTag, difficulty, count }),
+    }),
+  checkAnswer: (questionId, userAnswer) =>
+    request('/api/questions/check', {
+      method: 'POST',
+      body: JSON.stringify({ questionId, userAnswer }),
+    }),
+};
+
 // ─── Career Agent API (AI-powered, multipart for resume upload) ──
 
 async function careerAgentRequest(path, options = {}) {
