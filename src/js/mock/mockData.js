@@ -521,13 +521,27 @@ export const learningModules = [
   }
 ];
 
+// Mock tests are organized by ROLE, not by company. This is the offline fallback
+// used only if the live /api/mock-tests/list call fails; it mirrors CompanyService.java.
 export const mockTests = [
-  { id: 'mock-1', title: 'Complete Interview Mock Test', duration: 120, questions: 50, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'] },
-  { id: 'mock-2', title: 'Coding Assessment', duration: 90, questions: 4, difficulty: 'Hard', type: 'free', sections: ['Coding'] },
-  { id: 'mock-3', title: 'Aptitude Test', duration: 60, questions: 30, difficulty: 'Easy', type: 'free', sections: ['Aptitude'] },
-  { id: 'mock-4', title: 'System Design Mock', duration: 60, questions: 3, difficulty: 'Hard', type: 'paid', sections: ['System Design'] },
-  { id: 'mock-5', title: 'TCS NQT Simulator', duration: 90, questions: 40, difficulty: 'Easy', type: 'free', sections: ['Aptitude', 'Verbal', 'Coding'] },
-  { id: 'mock-6', title: 'Amazon Leadership Principles', duration: 45, questions: 20, difficulty: 'Medium', type: 'free', sections: ['Behavioral'] }
+  { id: 'mock-java-full', title: 'Java Developer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'java' },
+  { id: 'mock-python-full', title: 'Python Developer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'python' },
+  { id: 'mock-devops-full', title: 'DevOps Engineer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'devops' },
+  { id: 'mock-dataengineer-full', title: 'Data Engineer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'data-engineer' },
+  { id: 'mock-testing-full', title: 'QA/Testing Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'testing' },
+  { id: 'mock-dotnet-full', title: '.NET Developer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'dotnet' },
+  { id: 'mock-mobile-full', title: 'Mobile Developer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'mobile' },
+  { id: 'mock-salesforce-full', title: 'Salesforce Developer Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'salesforce' },
+  { id: 'mock-sap-full', title: 'SAP Consultant Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'sap' },
+  { id: 'mock-cybersecurity-full', title: 'Cybersecurity Analyst Mock Test', duration: 90, questions: 30, difficulty: 'Medium', type: 'free', sections: ['Aptitude', 'Coding', 'Technical'], role: 'cybersecurity' },
+  { id: 'mock-java-coding', title: 'Java Coding Round', duration: 90, questions: 6, difficulty: 'Hard', type: 'paid', sections: ['Coding'], role: 'java' },
+  { id: 'mock-python-coding', title: 'Python Coding Round', duration: 90, questions: 6, difficulty: 'Hard', type: 'paid', sections: ['Coding'], role: 'python' },
+  { id: 'mock-devops-coding', title: 'DevOps Coding & Scripting Round', duration: 90, questions: 6, difficulty: 'Hard', type: 'paid', sections: ['Coding'], role: 'devops' },
+  { id: 'mock-dataengineer-coding', title: 'Data Engineering Coding Round', duration: 90, questions: 6, difficulty: 'Hard', type: 'paid', sections: ['Coding'], role: 'data-engineer' },
+  { id: 'mock-dotnet-coding', title: '.NET Coding Round', duration: 90, questions: 6, difficulty: 'Hard', type: 'paid', sections: ['Coding'], role: 'dotnet' },
+  { id: 'mock-aptitude', title: 'Aptitude & Reasoning Test', duration: 60, questions: 30, difficulty: 'Easy', type: 'free', sections: ['Aptitude'], role: null },
+  { id: 'mock-systemdesign', title: 'System Design Round', duration: 60, questions: 3, difficulty: 'Hard', type: 'paid', sections: ['System Design'], role: null },
+  { id: 'mock-behavioral', title: 'Behavioral / HR Round', duration: 45, questions: 20, difficulty: 'Medium', type: 'free', sections: ['Behavioral'], role: null }
 ];
 
 export const paidServices = [
